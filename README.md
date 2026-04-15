@@ -2,7 +2,9 @@
 
 A full-stack Chrome Extension that serves as your personal AI-powered fashion assistant. Seamlessly perform virtual clothing try-ons, receive generative AI style feedback, and reverse-image search outfits directly from your browser!
 
-![UI Preview](extension/public/icons.svg) <!-- Replace with real screenshot if desired -->
+<img width="393" height="417" alt="image" src="https://github.com/user-attachments/assets/ebf43793-dcff-4498-8efa-22a15b274fb7" />
+<img width="394" height="571" alt="image" src="https://github.com/user-attachments/assets/8bdcf04b-f015-406b-a02c-8a3c33e1ea33" />
+
 
 ## Features
 
