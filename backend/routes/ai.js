@@ -24,12 +24,12 @@ router.post('/try-on', async (req, res) => {
 // Endpoint 2: AI Stylist
 router.post('/style', async (req, res) => {
   try {
-    const { image } = req.body;
+    const { image, inputImage } = req.body;
     if (!image) {
        return res.status(400).json({ error: "Missing image" });
     }
     
-    const feedback = await getStylistFeedback(image);
+    const feedback = await getStylistFeedback(image, inputImage);
     
     res.json({ success: true, ...feedback });
   } catch (error) {

@@ -5,7 +5,7 @@ const { GoogleGenAI } = require("@google/genai");
 const key = process.env.GEMINI_API_KEY;
 const ai = (key && key !== 'your_gemini_api_key_here') ? new GoogleGenAI({ apiKey: key }) : null;
 
-async function getStylistFeedback(imageInput) {
+async function getStylistFeedback(imageInput, extraImageInput) {
   if (!ai) {
     return {
        rating: "8/10",
@@ -14,31 +14,42 @@ async function getStylistFeedback(imageInput) {
   }
 
   try {
-    let base64Data;
-    let mimeType = "image/jpeg";
-    if (imageInput.startsWith('http')) {
-        const fetchRes = await fetch(imageInput);
-        mimeType = fetchRes.headers.get('content-type') || "image/jpeg";
-        const arrayBuffer = await fetchRes.arrayBuffer();
-        base64Data = Buffer.from(arrayBuffer).toString('base64');
-    } else {
-        if (imageInput.includes(';base64,')) {
-           mimeType = imageInput.split(';')[0].split(':')[1] || "image/jpeg";
+    const parseImage = async (img) => {
+        let base64Data;
+        let mimeType = "image/jpeg";
+        if (img.startsWith('http')) {
+            const fetchRes = await fetch(img);
+            mimeType = fetchRes.headers.get('content-type') || "image/jpeg";
+            const arrayBuffer = await fetchRes.arrayBuffer();
+            base64Data = Buffer.from(arrayBuffer).toString('base64');
+        } else {
+            if (img.includes(';base64,')) {
+               mimeType = img.split(';')[0].split(':')[1] || "image/jpeg";
+            }
+            base64Data = img.includes(',') ? img.split(',')[1] : img;
         }
-        base64Data = imageInput.includes(',') ? imageInput.split(',')[1] : imageInput;
+        return {
+           inlineData: {
+               data: base64Data,
+               mimeType: mimeType
+           }
+        };
+    };
+
+    const mainImagePart = await parseImage(imageInput);
+    const contentsArray = [
+        "You are an expert fashion stylist. Look at this outfit. Rate it out of 10, and provide 2-3 short, concrete suggestions to improve or accessorize the look.",
+        mainImagePart
+    ];
+
+    if (extraImageInput) {
+        contentsArray[0] += " I have also provided the standalone garment/reference image for additional context.";
+        contentsArray.push(await parseImage(extraImageInput));
     }
-    
+
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: [
-            "You are an expert fashion stylist. Look at this outfit. Rate it out of 10, and provide 2-3 short, concrete suggestions to improve or accessorize the look.",
-            {
-               inlineData: {
-                   data: base64Data,
-                   mimeType: mimeType
-               }
-            }
-        ]
+        contents: contentsArray
     });
     
     // Simple parsing assumption

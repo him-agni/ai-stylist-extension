@@ -15,6 +15,8 @@ function App() {
   // State for AI Stylist
   const [stylistLoading, setStylistLoading] = useState(false);
   const [stylistResult, setStylistResult] = useState(null);
+  const [stylistImage, setStylistImage] = useState(null);
+  const [stylistInputImage, setStylistInputImage] = useState(null);
 
   // State for Search
   const [searchLoading, setSearchLoading] = useState(false);
@@ -53,13 +55,21 @@ function App() {
   };
 
   const handleGetStyling = async () => {
-    if (!tryOnResult) return;
+    if (!stylistImage && !tryOnResult) return;
     setStylistLoading(true);
+    let targetImage = tryOnResult;
     try {
+      if (stylistImage) {
+         targetImage = await toBase64(stylistImage);
+      }
+      let extraImage = null;
+      if (stylistInputImage) {
+         extraImage = await toBase64(stylistInputImage);
+      }
       const res = await fetch(`${API_BASE}/style`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: tryOnResult })
+          body: JSON.stringify({ image: targetImage, inputImage: extraImage })
       });
       const data = await res.json();
       if(data.success) {
@@ -227,24 +237,25 @@ function App() {
 
       {activeTab === 'stylist' && (
         <div className="glass-card">
-           {tryOnResult ? (
-              <div style={{ textAlign: 'center' }}>
-                 <p style={{marginBottom: '16px', fontSize: '14px'}}>Get AI feedback on your generated outfit!</p>
-                 {!stylistResult ? (
-                     <button className="btn-primary" onClick={handleGetStyling} disabled={stylistLoading}>
-                        {stylistLoading ? <span className="loader"></span> : "Analyze Outfit"}
-                     </button>
-                 ) : (
-                     <div style={{textAlign: 'left'}}>
-                        <h3 style={{color: 'var(--accent)', marginBottom: '8px'}}>Rating: {stylistResult.rating}</h3>
-                        <p style={{fontSize: '14px', lineHeight: '1.5'}}>{stylistResult.suggestions}</p>
-                     </div>
-                 )}
-              </div>
+           <MediaInput label="Upload Custom Outfit Image" file={stylistImage} setFile={setStylistImage} />
+           <MediaInput label="Upload Input Garment/Reference Image (Optional)" file={stylistInputImage} setFile={setStylistInputImage} />
+           {(!stylistImage && tryOnResult) && (
+               <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                  <p style={{marginBottom: '8px', fontSize: '13px', color: 'var(--text-muted)'}}>Or analyzing previously generated Try-On image:</p>
+                  <img src={tryOnResult === 'mock_try_on_result_url' ? URL.createObjectURL(humanImage) : tryOnResult} className="result-img" style={{maxHeight: '100px', width: 'auto'}} alt="Try-On" />
+               </div>
+           )}
+           
+           {!stylistResult ? (
+               <button className="btn-primary" onClick={handleGetStyling} disabled={stylistLoading || (!stylistImage && !tryOnResult)}>
+                  {stylistLoading ? <span className="loader"></span> : "Analyze Outfit"}
+               </button>
            ) : (
-              <p style={{color: 'var(--text-muted)', textAlign: 'center', fontSize: '14px'}}>
-                 Run a Virtual Try-On first to get AI feedback!
-              </p>
+               <div style={{textAlign: 'left', marginTop: '16px'}}>
+                  <h3 style={{color: 'var(--accent)', marginBottom: '8px'}}>Rating: {stylistResult.rating}</h3>
+                  <p style={{fontSize: '14px', lineHeight: '1.5'}}>{stylistResult.suggestions}</p>
+                  <button className="btn-primary" style={{marginTop: '12px'}} onClick={() => setStylistResult(null)}>Analyze Another</button>
+               </div>
            )}
         </div>
       )}
