@@ -8,7 +8,7 @@ A full-stack Chrome Extension that serves as your personal AI-powered fashion as
 ## Features
 
 - 🪄 **Virtual Try-On (VTON)**: Upload a picture of yourself and a photo of any garment you find online. The extension uses deep learning (`yisol/IDM-VTON` via Hugging Face) to realistically render you wearing the outfit.
-- 💅 **AI Stylist**: Pass the rendered Try-On image to Google's Gemini Vision AI to get an outfit rating out of 10 along with expert, actionable styling advice and accessorizing tips.
+- 💅 **AI Stylist**: Pass the rendered Try-On image to Google's Gemini Vision AI to get an outfit rating out of 10 along with expert, actionable styling advice and accessorizing tips. Upload any other image and chat with AI stylist to get inputs and styling tips.
 - 🔍 **Visual Search**: Upload or paste an image of a clothing item, and the extension proxy seamlessly routes it through Google Lens (via SerpApi) to instantly find exact-match shopping links and pricing.
 - 🚀 **Universal Ingestion**: The beautifully styled Glassmorphic UI supports file uploads, pasting screenshots straight from your clipboard (`Ctrl+V`), and pasting direct image URLs.
 
