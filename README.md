@@ -5,6 +5,8 @@ A full-stack Chrome Extension that serves as your personal AI-powered fashion as
 <img width="394" height="560" alt="image" src="https://github.com/user-attachments/assets/7f44d538-f027-408a-b9f5-87ee271d3099" />
 <img width="394" height="571" alt="image" src="https://github.com/user-attachments/assets/8bdcf04b-f015-406b-a02c-8a3c33e1ea33" />
 
+Link- https://chromewebstore.google.com/detail/mofdjbjljapaoohiohglkfkdffbdcaij?utm_source=item-share-cb
+
 ## Features
 
 - 🪄 **Virtual Try-On (VTON)**: Upload a picture of yourself and a photo of any garment you find online. The extension uses deep learning (`yisol/IDM-VTON` via Hugging Face) to realistically render you wearing the outfit.
